@@ -1,6 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser';
-import authRouter from './routes/auth.routes.js'
+import authRoutes from './routes/auth.routes.js'
+import foodRoutes from './routes/food.routes.js'
 
 const app = express();
 app.use(cookieParser())
@@ -11,8 +12,8 @@ app.get('/', (req, res)=>{
      res.send("Hello This is Server")
 })
 
-//User auth endpoint
-app.use('/api/auth', authRouter)
+app.use('/api/auth', authRoutes)
+app.use('/api/food', foodRoutes)
 
 
 export default app

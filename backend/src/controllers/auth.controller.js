@@ -159,25 +159,33 @@ export const loginFoodPartner = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-        message: 'Food Partner logged in successfully',
-        foodPartner:{
-           _id: foodPartner._id,
-           name: foodPartner.name,
-           email: foodPartner.email
-        }
-    })
+    const token = await jwt.sign(
+      {
+        id: foodPartner._id,
+      },
+      process.env.JWT_SECRET
+    );
 
+    res.cookie("token", token);
+
+    res.status(200).json({
+      message: "Food Partner logged in successfully",
+      foodPartner: {
+        _id: foodPartner._id,
+        name: foodPartner.name,
+        email: foodPartner.email,
+      },
+    });
   } catch (error) {
-      return res.status(500).json({
-         message:'Internal server error'
-      })
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
 
 export const logoutFoodPartner = async (req, res) => {
-   res.clearCookie('token');
-   res.status(200).json({
-      message:'Food Partner logged out successfully'
-   })
-}
+  res.clearCookie("token");
+  res.status(200).json({
+    message: "Food Partner logged out successfully",
+  });
+};
