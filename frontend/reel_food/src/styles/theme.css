@@ -1,0 +1,36 @@
+:root {
+  /* Light Theme (Default) */
+  --bg-color: #f8f9fa;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --primary-color: #ff5252; /* Zomato-ish red */
+  --primary-hover: #e04040;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-focus-border: #ff5252;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --muted-text: #6c757d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Theme */
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --primary-color: #ff5252;
+    --primary-hover: #ff7676;
+    --input-bg: #2d2d2d;
+    --input-border: #404040;
+    --input-focus-border: #ff5252;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --muted-text: #a0a0a0;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
