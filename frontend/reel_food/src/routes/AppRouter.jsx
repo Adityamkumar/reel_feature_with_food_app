@@ -3,8 +3,11 @@ import UserRegister from '../pages/UserRegister'
 import UserLogin from '../pages/UserLogin'
 import FoodPartnerRegister from '../pages/FoodPartnerRegister'
 import FoodPartnerLogin from '../pages/FoodPartnerLogin'
-import Home from '../general/Home'
+import Home from '../home/Home'
 import CreateFood from '../foodPartner/CreateFood'
+import PartnerProfile from '../foodPartner/PartnerProfile' // Import the new page
+import SavedFood from '../pages/SavedFood'
+import UserProfile from '../pages/UserProfile'
 
 const AppRouter = () => {
     return (
@@ -16,6 +19,9 @@ const AppRouter = () => {
                 <Route path='/food-partner/login' element={<FoodPartnerLogin/>}/>
                 <Route path='/' element={<Home />} />
                 <Route path='/create-food' element={<CreateFood/>} />
+                <Route path='/food-partner/:id' element={<PartnerProfile />} />
+                <Route path='/saved' element={<SavedFood />} />
+                <Route path='/profile' element={<UserProfile />} />
             </Routes>
         </Router>
     )

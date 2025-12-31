@@ -17,7 +17,6 @@ const FoodPartnerLogin = () => {
             email,
             password
         }, {withCredentials: true}).then(reponse => {
-            console.log(reponse.data)
             setEmail('')
             setPassword('')
 
