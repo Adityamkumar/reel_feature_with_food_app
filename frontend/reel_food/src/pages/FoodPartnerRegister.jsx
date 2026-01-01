@@ -36,7 +36,6 @@ const FoodPartnerRegister = () => {
                 {withCredentials: true}
             )
 
-            console.log(response.data)
 
             setFormData({
                 name: '',

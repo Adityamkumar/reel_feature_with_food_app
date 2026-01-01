@@ -292,8 +292,32 @@
         text-align: center;
     }
     
+
     .profile-right-section {
         width: 100%;
         justify-content: space-around;
     }
 }
+
+.delete-video-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.delete-video-btn:hover {
+    background-color: #ff2d55;
+}
+

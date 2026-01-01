@@ -13,6 +13,7 @@ const CreateFood = () => {
   const [videoPreview, setVideoPreview] = useState(null);
   const fileInputRef = useRef(null);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const navigate = useNavigate()
 
@@ -86,6 +87,8 @@ const CreateFood = () => {
       if (formData.videoFile) {
         data.append('video', formData.videoFile);
       }
+      
+      setIsUploading(true);
 
       const response = await axios.post('http://localhost:3000/api/food', data, {
         withCredentials: true,
@@ -93,6 +96,7 @@ const CreateFood = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      setIsUploading(false);
       alert('Food item created successfully!');
       
       // Reset form
@@ -103,10 +107,13 @@ const CreateFood = () => {
       });
       setVideoPreview(null);
 
-      navigate('/')
+
+      // navigate('/')
+
 
     } catch (error) {
       console.error('Error submitting food data:', error);
+      setIsUploading(false);
       alert('Failed to create food item. Check console for details.');
     }
   };
@@ -116,6 +123,9 @@ const CreateFood = () => {
       <div className="create-food-header">
         <h1>Create New Item</h1>
         <p>Share your culinary masterpiece with the world.</p>
+        <button className="submit-btn" style={{width: 'auto', marginTop: '10px', backgroundColor: '#333'}} onClick={() => navigate('/food-partner/dashboard')}>
+            View My Dashboard
+        </button>
       </div>
 
       <form className="create-food-form" onSubmit={submitFoodData}>
@@ -187,8 +197,8 @@ const CreateFood = () => {
           />
         </div>
 
-        <button type="submit" className="submit-btn" disabled={!formData.itemName || !formData.videoFile}>
-          Create Food Item
+        <button type="submit" className="submit-btn" disabled={!formData.itemName || !formData.videoFile || isUploading}>
+          {isUploading ? 'Uploading...' : 'Create Food Item'}
         </button>
       </form>
     </div>

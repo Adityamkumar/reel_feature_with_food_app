@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Heart, MessageCircle, Bookmark } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, Volume2, VolumeX } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import './Home.css';
 
@@ -9,6 +9,7 @@ const Home = () => {
     const [videos, setVideos] = useState([]);
     const [likedIds, setLikedIds] = useState(new Set());
     const [savedIds, setSavedIds] = useState(new Set());
+    const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
     const videoRefs = useRef([]);
     const navigate = useNavigate();
     const location = useLocation();
@@ -76,10 +77,11 @@ const Home = () => {
                 const videoElement = entry.target;
                 if (entry.isIntersecting) {
                     videoElement.currentTime = 0;
+                    // Ensure we try to play. Muted allows this to succeed.
                     const playPromise = videoElement.play();
                     if (playPromise !== undefined) {
                       playPromise.catch(e => {
-                        console.log("Autoplay prevented:", e);
+                          console.log("Autoplay blocked", e);
                       });
                     }
                 } else {
@@ -119,6 +121,11 @@ const Home = () => {
         }
     };
 
+    const toggleMute = (e) => {
+        e.stopPropagation();
+        setIsMuted(prev => !prev);
+    };
+
     const toggleLike = async (e, id) => {
         e.stopPropagation();
         try {
@@ -135,9 +142,7 @@ const Home = () => {
             // Optimistically update the like count in the videos array
             setVideos(prevVideos => prevVideos.map(video => {
                 if (video._id === id) {
-                    const isLiked = likedIds.has(id); // Current state before update was processed by setLikedIds? 
-                    // Wait, setLikedIds is async/batched. Better to check the Set inside the click handler or use the previous set derivation.
-                    // Actually, simpler logic: check if we are unliking or liking based on current Set state.
+                    const isLiked = likedIds.has(id); 
                     const currentlyLiked = likedIds.has(id);
                     return {
                         ...video,
@@ -169,7 +174,26 @@ const Home = () => {
     };
 
     if (videos.length === 0) {
-        return <div className="loading-state">Loading delicious food reels...</div>;
+        return (
+            <div className="loading-container">
+                <div className="skeleton skeleton-video"></div>
+                
+                <div className="skeleton-actions">
+                    <div className="skeleton skeleton-icon"></div>
+                    <div className="skeleton skeleton-icon"></div>
+                    <div className="skeleton skeleton-icon"></div>
+                    <div className="skeleton skeleton-icon"></div>
+                </div>
+
+                <div className="skeleton-overlay">
+                    <div className="skeleton skeleton-title"></div>
+                    <div className="skeleton skeleton-desc"></div>
+                    <div className="skeleton skeleton-desc-short"></div>
+                    <div className="skeleton skeleton-btn"></div>
+                </div>
+                <BottomNav />
+            </div>
+        );
     }
 
     return (
@@ -181,14 +205,23 @@ const Home = () => {
                         src={video.video} 
                         className="reel-video"
                         onClick={() => togglePlay(index)}
-                        loop
-                        muted
+                        loop  
+                        autoPlay
+                        muted={isMuted} // Controlled mute state
                         playsInline
                         preload='metadata'
                     />
                     
                     {/* Right Sidebar Actions */}
                     <div className="reel-actions">
+                         <div className="action-item" onClick={toggleMute}>
+                            {isMuted ? (
+                                <VolumeX size={32} color="white" strokeWidth={1.5} />
+                            ) : (
+                                <Volume2 size={32} color="white" strokeWidth={1.5} />
+                            )}
+                        </div>
+
                         <div className="action-item" onClick={(e) => toggleLike(e, video._id)}>
                             <Heart 
                                 size={32} 
