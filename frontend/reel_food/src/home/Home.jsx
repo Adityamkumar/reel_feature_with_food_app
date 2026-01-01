@@ -9,6 +9,7 @@ const Home = () => {
     const [videos, setVideos] = useState([]);
     const [likedIds, setLikedIds] = useState(new Set());
     const [savedIds, setSavedIds] = useState(new Set());
+    const [processingIds, setProcessingIds] = useState(new Set());
     const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
     const videoRefs = useRef([]);
     const navigate = useNavigate();
@@ -35,14 +36,11 @@ const Home = () => {
                         const [targetVideo] = data.splice(targetIndex, 1);
                         data.unshift(targetVideo);
                         
-                        // Clear state so random play resume on next refresh? optional.
-                        // window.history.replaceState({}, document.title)
                     }
                 }
 
                 setVideos(data);
                 
-                // Initialize liked and saved states
                 const initialLiked = new Set();
                 const initialSaved = new Set();
                 data.forEach(item => {
@@ -63,7 +61,6 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        // Only set up observer if we have videos
         if (videos.length === 0) return;
 
         const observerOptions = {
@@ -77,7 +74,6 @@ const Home = () => {
                 const videoElement = entry.target;
                 if (entry.isIntersecting) {
                     videoElement.currentTime = 0;
-                    // Ensure we try to play. Muted allows this to succeed.
                     const playPromise = videoElement.play();
                     if (playPromise !== undefined) {
                       playPromise.catch(e => {
@@ -128,10 +124,18 @@ const Home = () => {
 
     const toggleLike = async (e, id) => {
         e.stopPropagation();
+        
+        // Prevent spam clicking
+        if (processingIds.has(id)) return;
+
         try {
+            // Lock interaction
+            setProcessingIds(prev => new Set(prev).add(id));
+
             await axios.post('http://localhost:3000/api/food/like', { foodId: id }, {
                 withCredentials: true
             });
+            
             setLikedIds(prev => {
                 const next = new Set(prev);
                 if (next.has(id)) next.delete(id);
@@ -139,20 +143,26 @@ const Home = () => {
                 return next;
             });
             
-            // Optimistically update the like count in the videos array
+            
             setVideos(prevVideos => prevVideos.map(video => {
                 if (video._id === id) {
-                    const isLiked = likedIds.has(id); 
                     const currentlyLiked = likedIds.has(id);
                     return {
                         ...video,
-                        likeCount: (video.likeCount || 0) + (currentlyLiked ? -1 : 1)
+                        likeCount: Math.max(0, (video.likeCount || 0) + (currentlyLiked ? -1 : 1))
                     };
                 }
                 return video;
             }));
+
         } catch (error) {
             console.error("Error liking food:", error);
+        } finally {
+            setProcessingIds(prev => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
         }
     };
 
