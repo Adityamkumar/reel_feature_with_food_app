@@ -23,9 +23,15 @@ A full-stack web application that brings the engaging "Reels" experience to food
 *   **Profile Page**: A public-facing profile page showcasing the restaurant's details and all their video reels.
 
 ### ⚙️ Technical Highlights
-*   **Skeleton Loading**: Premium skeleton loaders for a smooth initial load experience.
-*   **Optimistic UI**: Instant feedback on interactions (Likes/Saves) before the server responds.
-*   **Responsive Design**: Mobile-first styling that looks great on Mobile devices.
+*   **Security**:
+    *   🔒 **Auth Rate Limiting**: lockout system to prevent brute-force attacks (5 attempts / 15 mins).
+    *   🛡️ **Protected Video Playback**: Videos use Blob URLs to hide the source and prevent simple right-click downloads.
+    *   👮 **Context Menu Blocking**: Disabled context menu on video elements.
+*   **Performance**:
+    *   **Skeleton Loading**: Premium skeleton loaders for a smooth initial load experience.
+    *   **Optimistic UI**: Instant feedback on interactions before the server responds.
+    *   **Lazy Loading**: Videos are fetched only when needed to save bandwidth.
+*   **Response Design**: Mobile-first styling that looks great on Mobile devices.
 *   **Cloud Database**: Connected to MongoDB Atlas for persistent data storage.
 
 ---
@@ -42,9 +48,9 @@ A full-stack web application that brings the engaging "Reels" experience to food
 ### Backend
 *   **Node.js & Express**: Robust REST API.
 *   **MongoDB & Mongoose**: NoSQL database for flexible data modeling.
+*   **express-rate-limit**: For API rate limiting.
 *   **JWT & Cookies**: Secure authentication for both Users and Partners.
-*   **Multer**: Handling file uploads.
-*   **ImageKit**: (Integrated) For media handling/storage.
+*   **Multer & ImageKit**: Handling file uploads and media storage.
 
 ---
 
@@ -104,18 +110,19 @@ Zomato_Reel_Feat/
 ├── backend/                 # Node.js/Express Server
 │   ├── src/
 │   │   ├── controllers/     # Logic for Auth, Food, Partners
-│   │   ├── models/          # Mongoose Schemas (User, Food, Save, Like)
+│   │   ├── models/          # Mongoose Schemas
 │   │   ├── routes/          # API Routes
-│   │   └── middlewares/     # Auth checks
+│   │   └── middlewares/     # Auth & Rate Limit checks
 │   ├── server.js            # Entry point
 │   └── .env                 # Env variables
 │
 └── frontend/reel_food/      # React Application
     ├── src/
-    │   ├── components/      # Reusable UI (BottomNav, etc.)
-    │   ├── home/            # Main Feed Logic (Home.jsx)
-    │   ├── foodPartner/     # Partner specific pages (Dashboard, Create)
-    │   └── pages/           # Auth & Utility pages (Login, Register)
+    │   ├── components/      # Reusable UI (ProtectedVideo, etc.)
+    │   ├── hooks/           # Custom Hooks (useRateLimiter)
+    │   ├── home/            # Main Feed Logic
+    │   ├── foodPartner/     # Partner specific pages
+    │   └── pages/           # Auth & Utility pages
     └── public/              # Static assets
 ```
 
