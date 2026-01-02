@@ -7,7 +7,8 @@
 }
 
 .auth-card {
-  background-color: var(--card-bg);
+  background-color: var(--auth-card-bg);
+  color: var(--text-color);
   padding: 2.5rem;
   border-radius: 16px;
   box-shadow: 0 10px 25px var(--shadow-color);
@@ -54,8 +55,8 @@
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.95rem; /* Slightly larger */
+  font-weight: 600; /* Bolder */
   color: var(--text-color);
 }
 
