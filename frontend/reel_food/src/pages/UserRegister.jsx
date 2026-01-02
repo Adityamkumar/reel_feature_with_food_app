@@ -3,6 +3,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from '../config/api'
 import '../styles/auth.css'
+import { useRateLimiter } from '../hooks/useRateLimiter'
 
 
 const UserRegister = () => {
@@ -10,14 +11,21 @@ const UserRegister = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    
+    // Use a unique key for User Register
+    const { isLocked, timeLeft, handleRateLimitError, formatTime } = useRateLimiter('lockout_user_register');
 
     const navigate = useNavigate()
 
     const submitHandler = async (e) => {
         e.preventDefault()
+        if (isLocked || loading) return;
         setError('')
+        setLoading(true)
 
         try {
+            // eslint-disable-next-line no-unused-vars
             const response = await axios.post(`${API_URL}/api/auth/user/register`, {
                 fullName,
                 email,
@@ -31,7 +39,14 @@ const UserRegister = () => {
             navigate('/')
         } catch (err) {
             console.error(err)
-            setError(err.response?.data?.message || 'Registration failed')
+            const rateLimitMsg = handleRateLimitError(err);
+            if (rateLimitMsg) {
+                setError(rateLimitMsg);
+            } else {
+                setError(err.response?.data?.message || 'Registration failed')
+            }
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -51,7 +66,9 @@ const UserRegister = () => {
                             value={fullName}
                             onChange={
                                 (e) => setFullName(e.target.value)
-                            }/>
+                            }
+                            disabled={isLocked || loading}
+                        />
                     </div>
                     <div className='form-group'>
                         <label className='form-label' htmlFor='email'>Email Address</label>
@@ -59,7 +76,9 @@ const UserRegister = () => {
                             value={email}
                             onChange={
                                 (e) => setEmail(e.target.value)
-                            }/>
+                            }
+                            disabled={isLocked || loading}
+                        />
                     </div>
                     <div className='form-group'>
                         <label className='form-label' htmlFor='password'>Password</label>
@@ -67,10 +86,19 @@ const UserRegister = () => {
                             value={password}
                             onChange={
                                 (e) => setPassword(e.target.value)
-                            }/>
+                            }
+                            disabled={isLocked || loading}
+                        />
                     </div>
                     {error && <div className="error-message">{error}</div>}
-                    <button type='submit' className='submit-btn'>Sign Up</button>
+                    <button 
+                        type='submit' 
+                        className='submit-btn'
+                        disabled={isLocked || loading}
+                        style={isLocked ? { backgroundColor: '#ccc', cursor: 'not-allowed' } : {}}
+                    >
+                        {isLocked ? `Try again in ${formatTime(timeLeft)}` : (loading ? 'Creating Account...' : 'Sign Up')}
+                    </button>
                 </form>
                 <div className='auth-footer'>
                     <p>

@@ -3,20 +3,28 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../styles/auth.css'
 import axios from 'axios'
 import { API_URL } from '../config/api'
+import { useRateLimiter } from '../hooks/useRateLimiter'
 
 const UserLogin = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  
+  // Use a unique key for User Login to isolate the lockout
+  const { isLocked, timeLeft, handleRateLimitError, formatTime } = useRateLimiter('lockout_user_login');
   
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
        e.preventDefault();
+       if (isLocked || loading) return;
        setError('');
+       setLoading(true);
 
       try {
+          // eslint-disable-next-line no-unused-vars
           const response = await axios.post(`${API_URL}/api/auth/user/login`,{
               email,
               password
@@ -29,7 +37,14 @@ const UserLogin = () => {
          
          navigate('/')
       } catch (err) {
-          setError(err.response?.data?.message || 'Something went wrong');
+          const rateLimitMsg = handleRateLimitError(err);
+          if (rateLimitMsg) {
+             setError(rateLimitMsg);
+          } else {
+             setError(err.response?.data?.message || 'Something went wrong');
+          }
+      } finally {
+          setLoading(false);
       }
   }
 
@@ -51,6 +66,7 @@ const UserLogin = () => {
               required 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLocked || loading}
             />
           </div>
           <div className='form-group'>
@@ -60,13 +76,23 @@ const UserLogin = () => {
               id='password' 
               className='form-input' 
               placeholder='Enter your password'
+              autoComplete='true'
               required 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLocked || loading}
             />
           </div>
           {error && <div className="error-message">{error}</div>}
-          <button type='submit' className='submit-btn'>Login</button>
+          
+          <button 
+            type='submit' 
+            className='submit-btn'
+            disabled={isLocked || loading}
+            style={isLocked ? { backgroundColor: '#ccc', cursor: 'not-allowed' } : {}}
+          >
+            {isLocked ? `Try again in ${formatTime(timeLeft)}` : (loading ? 'Logging in...' : 'Login')}
+          </button>
         </form>
         <div className='auth-footer'>
           <p>

@@ -1,20 +1,27 @@
-import React, {useState} from 'react'
+import {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import '../styles/auth.css'
 import axios from 'axios'
 import { API_URL } from '../config/api'
+import { useRateLimiter } from '../hooks/useRateLimiter'
 
 const FoodPartnerLogin = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    
+    // Use a unique key for Partner Login
+    const { isLocked, timeLeft, handleRateLimitError, formatTime } = useRateLimiter('lockout_partner_login');
 
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLocked || loading) return;
         setError('');
+        setLoading(true);
 
         try {
             await axios.post(`${API_URL}/api/auth/food-partner/login`, {
@@ -28,7 +35,14 @@ const FoodPartnerLogin = () => {
             navigate('/create-food');
         } catch (error) {
             console.error("Login failed:", error);
-            setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
+            const rateLimitMsg = handleRateLimitError(error);
+            if (rateLimitMsg) {
+                setError(rateLimitMsg);
+            } else {
+                setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
+            }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -47,7 +61,9 @@ const FoodPartnerLogin = () => {
                             value={email}
                             onChange={
                                 (e) => setEmail(e.target.value)
-                            }/>
+                            }
+                            disabled={isLocked || loading}
+                        />
                     </div>
                     <div className='form-group'>
                         <label className='form-label' htmlFor='password'>Password</label>
@@ -55,10 +71,19 @@ const FoodPartnerLogin = () => {
                             value={password}
                             onChange={
                                 (e) => setPassword(e.target.value)
-                            }/>
+                            }
+                            disabled={isLocked || loading}
+                        />
                     </div>
                     {error && <div className="error-message">{error}</div>}
-                    <button type='submit' className='submit-btn'>Login to Dashboard</button>
+                    <button 
+                        type='submit' 
+                        className='submit-btn'
+                        disabled={isLocked || loading}
+                        style={isLocked ? { backgroundColor: '#ccc', cursor: 'not-allowed' } : {}}
+                    >
+                        {isLocked ? `Try again in ${formatTime(timeLeft)}` : (loading ? 'Logging in...' : 'Login to Dashboard')}
+                    </button>
                 </form>
                 <div className='auth-footer'>
                     <p>
