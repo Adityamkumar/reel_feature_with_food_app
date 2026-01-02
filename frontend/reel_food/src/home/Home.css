@@ -210,3 +210,58 @@
     border-radius: 50%;
 }
 
+/* Video Wrapper for Double Tap */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Double Tap Heart Animation */
+.heart-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 25;
+    pointer-events: none;
+    animation: heartPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes heartPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    15% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0; 
+    }
+}
+
+/* Progress Bar */
+.progress-container {
+    position: absolute;
+    bottom: 60px; /* Moce up slightly above bottom nav */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: 100; /* Ensure strictly above other overlays */
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary-color, #ff5252);
+    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Subtle shadow for contrast */
+    transition: width 0.1s linear;
+}
+
