@@ -88,8 +88,29 @@ const PartnerDashboard = () => {
 
     return (
         <div className="profile-container">
-            <div className="profile-header-actions" style={{display: 'flex', justifyContent: 'space-between', padding: '16px'}}>
-                <div className="profile-back-btn" onClick={() => navigate('/create-food')}>
+            <div className="profile-header-actions" style={{
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '16px',
+                alignItems: 'center',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                backgroundColor: '#00000000' // Transparent
+            }}>
+                <div 
+                    onClick={() => navigate('/create-food')}
+                    style={{
+                        cursor: 'pointer',
+                        color: 'white',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        padding: '8px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
                     <ArrowLeft size={24} />
                 </div>
                 <button 
@@ -108,7 +129,7 @@ const PartnerDashboard = () => {
                 </button>
             </div>
 
-            <div className="profile-header-card">
+            <div className="profile-header-card" style={{marginTop: '0'}}>
                 <div className="profile-content-wrapper">
                     <div className="profile-left-section">
                         <div className="profile-avatar-container">
