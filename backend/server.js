@@ -4,8 +4,18 @@ import { configDotenv } from 'dotenv';
 
 configDotenv()
 
-connectDB()
+configDotenv()
 
-app.listen(3000, ()=>{
-     console.log(`Server Running on PORT: 3000`)
-})
+// Wrap in async function to handle connection promise
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(3000, () => {
+             console.log(`Server Running on PORT: 3000`);
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+    }
+};
+
+startServer();
