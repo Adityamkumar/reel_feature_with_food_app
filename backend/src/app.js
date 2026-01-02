@@ -6,6 +6,10 @@ import foodPartnerRoutes from './routes/food-partner.route.js'
 import cors from 'cors'
 
 const app = express();
+
+// Trust the first proxy (Vercel/Heroku/etc) to get correct user IP for rate limiting
+app.set('trust proxy', 1);
+
 app.use(cors({
      origin: process.env.CORS_ORIGIN || "http://localhost:5173",
      credentials: true
@@ -23,6 +27,15 @@ app.get('/', (req, res)=>{
 app.use('/api/auth', authRoutes)
 app.use('/api/food', foodRoutes)
 app.use('/api/food-partner', foodPartnerRoutes)
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error("Uncaught Error:", err);
+    res.status(err.status || 500).json({
+        message: err.message || "Internal Server Error",
+        stack: process.env.NODE_ENV === 'production' ? null : err.stack
+    });
+});
 
 
 export default app
