@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../config/api';
+import {API_URL} from '../config/api';
 import BottomNav from '../components/BottomNav';
-import { User, LogOut, Mail, ShoppingBag } from 'lucide-react';
+import {User, LogOut, Mail, ShoppingBag} from 'lucide-react';
 import './UserProfile.css';
 
 const UserProfile = () => {
@@ -14,9 +14,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/auth/user/me`, {
-                    withCredentials: true
-                });
+                const response = await axios.get(`${API_URL}/api/auth/user/me`, {withCredentials: true});
                 setUser(response.data.user);
                 setLoading(false);
             } catch (error) {
@@ -31,9 +29,7 @@ const UserProfile = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.get(`${API_URL}/api/auth/user/logout`, {
-                withCredentials: true
-            });
+            await axios.get(`${API_URL}/api/auth/user/logout`, {withCredentials: true});
             navigate('/user/login');
         } catch (error) {
             console.error("Logout failed:", error);
@@ -44,7 +40,9 @@ const UserProfile = () => {
         return <div className="profile-page loading">Loading...</div>;
     }
 
-    if (!user) return null;
+    if (!user) 
+        return null;
+    
 
     return (
         <div className="profile-page">
@@ -56,33 +54,43 @@ const UserProfile = () => {
                 <div className="profile-card">
                     <div className="avatar-section">
                         <div className="avatar-placeholder">
-                            <span className="avatar-letter">{user.fullName?.charAt(0) || 'U'}</span>
+                            <span className="avatar-letter">
+                                {
+                                user.fullName ?. charAt(0) || 'U'
+                            }</span>
                         </div>
-                        <h3>{user.fullName}</h3>
+                        <h3>{
+                            user.fullName
+                        }</h3>
                         <p className="user-handle">Foodie</p>
                     </div>
 
                     <div className="info-section">
                         <div className="info-row">
-                            <Mail size={20} className="info-icon" />
-                            <span>{user.email}</span>
+                            <Mail size={20}
+                                className="info-icon"/>
+                            <span>{
+                                user.email
+                            }</span>
                         </div>
                         <div className="info-row">
-                            <ShoppingBag size={20} className="info-icon" />
+                            <ShoppingBag size={20}
+                                className="info-icon"/>
                             <span>0 Orders</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="action-section">
-                    <button className="logout-btn" onClick={handleLogout}>
-                        <LogOut size={20} />
+                    <button className="logout-btn"
+                        onClick={handleLogout}>
+                        <LogOut size={20}/>
                         <span>Logout</span>
                     </button>
                 </div>
             </div>
 
-            <BottomNav />
+            <BottomNav/>
         </div>
     );
 };

@@ -73,12 +73,39 @@ const PartnerDashboard = () => {
         navigate('/', { state: { videoId: video._id } });
     };
 
+    const handleLogout = async () => {
+        try {
+            await axios.get(`${API_URL}/api/auth/food-partner/logout`, {
+                withCredentials: true
+            });
+            navigate('/food-partner/login');
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    };
+
     if (loading) return <div className="profile-container" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>Loading...</div>;
 
     return (
         <div className="profile-container">
-            <div className="profile-back-btn" onClick={() => navigate('/create-food')}>
-                <ArrowLeft size={24} />
+            <div className="profile-header-actions" style={{display: 'flex', justifyContent: 'space-between', padding: '16px'}}>
+                <div className="profile-back-btn" onClick={() => navigate('/create-food')}>
+                    <ArrowLeft size={24} />
+                </div>
+                <button 
+                    onClick={handleLogout}
+                    style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#ff4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    Logout
+                </button>
             </div>
 
             <div className="profile-header-card">
