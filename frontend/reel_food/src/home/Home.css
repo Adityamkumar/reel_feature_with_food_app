@@ -1,6 +1,6 @@
 
 .reels-container {
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
@@ -15,7 +15,7 @@
 }
 
 .reel-item {
-    height: 100vh; /* Using 100vh ensures full viewport height snaps */
+    height: 100dvh; /* Using 100dvh ensures full viewport height snaps on mobile */
     width: 100%;
     scroll-snap-align: start;
     position: relative;
@@ -129,7 +129,7 @@
 
 /* Loading Skeleton */
 .loading-container {
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     background-color: #000;
     display: flex;
@@ -250,18 +250,19 @@
 /* Progress Bar */
 .progress-container {
     position: absolute;
-    bottom: 60px; /* Moce up slightly above bottom nav */
+    bottom: 80px; /* Increased to ensure visibility above nav */
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 4px; /* Slightly thicker for visibility */
     background-color: rgba(255, 255, 255, 0.3);
-    z-index: 100; /* Ensure strictly above other overlays */
+    z-index: 1000; /* Ensure strictly above everything */
 }
 
 .progress-bar {
     height: 100%;
     background-color: var(--primary-color, #ff5252);
-    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Subtle shadow for contrast */
-    transition: width 0.1s linear;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5); 
+    border-radius: 0 4px 4px 0;
+    /* transition handled by gsap */
 }
 
