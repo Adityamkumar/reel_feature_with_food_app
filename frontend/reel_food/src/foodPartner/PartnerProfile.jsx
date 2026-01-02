@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import './PartnerProfile.css';
 
 const PartnerProfile = () => {
@@ -16,11 +17,11 @@ const PartnerProfile = () => {
         const fetchPartnerData = async () => {
             try {
                 // Fetch Partner Details
-                const partnerResponse = await axios.get(`http://localhost:3000/api/food-partner/${id}`, {withCredentials: true});
+                const partnerResponse = await axios.get(`${API_URL}/api/food-partner/${id}`, {withCredentials: true});
                 setPartner(partnerResponse.data.foodPartner);
 
                 // Fetch videos
-                const response = await axios.get('http://localhost:3000/api/food', {
+                const response = await axios.get(`${API_URL}/api/food`, {
                      withCredentials: true 
                 });
                 const allVideos = response.data.foodItems || [];

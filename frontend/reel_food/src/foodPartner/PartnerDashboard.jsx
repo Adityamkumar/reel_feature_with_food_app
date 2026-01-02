@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import './PartnerProfile.css';
 
 const PartnerDashboard = () => {
@@ -15,13 +16,13 @@ const PartnerDashboard = () => {
         try {
             setLoading(true);
             // Fetch Current Partner Details
-            const partnerResponse = await axios.get('http://localhost:3000/api/food-partner/profile/me', {
+            const partnerResponse = await axios.get(`${API_URL}/api/food-partner/profile/me`, {
                 withCredentials: true
             });
             setPartner(partnerResponse.data.foodPartner);
 
             // Fetch My Videos
-            const videoResponse = await axios.get('http://localhost:3000/api/food/my-foods', {
+            const videoResponse = await axios.get(`${API_URL}/api/food/my-foods`, {
                 withCredentials: true 
             });
             
@@ -55,7 +56,7 @@ const PartnerDashboard = () => {
         }
 
         try {
-            await axios.delete(`http://localhost:3000/api/food/${videoId}`, {
+            await axios.delete(`${API_URL}/api/food/${videoId}`, {
                 withCredentials: true
             });
             // Update UI locally

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import BottomNav from '../components/BottomNav';
 import { User, LogOut, Mail, ShoppingBag } from 'lucide-react';
 import './UserProfile.css';
@@ -13,7 +14,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/auth/user/me', {
+                const response = await axios.get(`${API_URL}/api/auth/user/me`, {
                     withCredentials: true
                 });
                 setUser(response.data.user);
@@ -30,7 +31,7 @@ const UserProfile = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.get('http://localhost:3000/api/auth/user/logout', {
+            await axios.get(`${API_URL}/api/auth/user/logout`, {
                 withCredentials: true
             });
             navigate('/user/login');

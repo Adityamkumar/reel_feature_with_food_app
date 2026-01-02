@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import { Heart, MessageCircle, Bookmark, Volume2, VolumeX } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import './Home.css';
@@ -18,7 +19,7 @@ const Home = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/food', {
+                const response = await axios.get(`${API_URL}/api/food`, {
                     withCredentials: true
                 });
                 let data = response.data.foodItems || []; 
@@ -132,7 +133,7 @@ const Home = () => {
             // Lock interaction
             setProcessingIds(prev => new Set(prev).add(id));
 
-            await axios.post('http://localhost:3000/api/food/like', { foodId: id }, {
+            await axios.post(`${API_URL}/api/food/like`, { foodId: id }, {
                 withCredentials: true
             });
             
@@ -169,7 +170,7 @@ const Home = () => {
     const toggleSave = async (e, id) => {
         e.stopPropagation();
         try {
-            await axios.post('http://localhost:3000/api/food/save', { foodId: id }, {
+            await axios.post(`${API_URL}/api/food/save`, { foodId: id }, {
                 withCredentials: true
             });
             setSavedIds(prev => {

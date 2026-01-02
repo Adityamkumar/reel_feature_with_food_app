@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import './CreateFood.css';
 import axios from 'axios'
+import { API_URL } from '../config/api'
 import { useNavigate } from 'react-router-dom';
 
 
@@ -90,7 +91,7 @@ const CreateFood = () => {
       
       setIsUploading(true);
 
-      const response = await axios.post('http://localhost:3000/api/food', data, {
+      const response = await axios.post(`${API_URL}/api/food`, data, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'

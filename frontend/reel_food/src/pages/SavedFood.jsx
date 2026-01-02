@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import {ArrowLeft, Grid, List} from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
@@ -14,7 +15,7 @@ const SavedFood = () => {
         const fetchSavedFoods = async () => {
             try {
                 // Determine base URL (assuming localhost:3000 for now based on previous context)
-                const response = await axios.get('http://localhost:3000/api/food/saved', {
+                const response = await axios.get(`${API_URL}/api/food/saved`, {
                     withCredentials: true
                 });
                 setSavedItems(response.data.savedFoods || []);
