@@ -30,7 +30,11 @@ export const registerUser = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     res.status(201).json({
       message: "User register successfully",
@@ -70,7 +74,11 @@ export const loginUser = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     res.status(200).json({
       message: "User logged in successfully",
@@ -86,7 +94,11 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None"
+  });
   res.status(200).json({
     messsage: "User logged out successfully",
   });
@@ -134,7 +146,11 @@ export const registerFoodPartner = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     res.status(200).json({
       message: "Food Partner register successfully",
@@ -183,7 +199,11 @@ export const loginFoodPartner = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     res.status(200).json({
       message: "Food Partner logged in successfully",
@@ -201,7 +221,11 @@ export const loginFoodPartner = async (req, res) => {
 };
 
 export const logoutFoodPartner = async (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None"
+  });
   res.status(200).json({
     message: "Food Partner logged out successfully",
   });
