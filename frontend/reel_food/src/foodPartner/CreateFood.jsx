@@ -11,6 +11,9 @@ const CreateFood = () => {
     const fileInputRef = useRef(null);
     const [isDragActive, setIsDragActive] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState("");
+
 
     const navigate = useNavigate()
 
@@ -21,6 +24,45 @@ const CreateFood = () => {
             [name]: value
         }));
     };
+
+
+    // AI Generate Handler
+    const handleGenerateWithAI = async () => {
+        if (!formData.itemName.trim()) {
+            setAiError("Please enter item name first");
+            return;
+        }
+
+        try {
+            setAiLoading(true);
+            setAiError("");
+
+            const response = await axios.post(`${API_URL}/api/ai/generate-reel-meta`, {
+                foodType: formData.itemName,
+                extraHint: formData.description
+            }, {withCredentials: true});
+
+            const content = response.data.content;
+            // Expected format:
+            // Title: ...
+            // Description: ...
+            const titleMatch = content.match(/Title:\s*(.*)/);
+            const descMatch = content.match(/Description:\s*(.*)/);
+
+            setFormData(prev => ({
+                ...prev,
+                itemName: titleMatch ? titleMatch[1] : prev.itemName,
+                description: descMatch ? descMatch[1] : prev.description
+            }));
+
+        } catch (error) {
+            console.error("AI generation failed:", error);
+            setAiError("AI generation failed. Please try again.");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -64,6 +106,8 @@ const CreateFood = () => {
         if (bytes === 0) 
             return '0 Bytes';
         
+
+
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -80,23 +124,26 @@ const CreateFood = () => {
         if (fileInputRef.current) 
             fileInputRef.current.value = '';
         
+
+
     };
 
     /* Removed duplicate handleSubmit */
 
     const submitFoodData = async (e) => {
         e.preventDefault();
-        if (isUploading) return;
+        if (isUploading) 
+            return;
+        
+
 
         try {
             setIsUploading(true);
 
             // 1. Get Authentication Parameters from Backend
-            const authResponse = await axios.get(`${API_URL}/api/food/imagekit-auth`, {
-                withCredentials: true
-            });
+            const authResponse = await axios.get(`${API_URL}/api/food/imagekit-auth`, {withCredentials: true});
 
-            const { signature, token, expire, publicKey } = authResponse.data;
+            const {signature, token, expire, publicKey} = authResponse.data;
 
             // 2. Upload directly to ImageKit
             const uploadData = new FormData();
@@ -107,10 +154,10 @@ const CreateFood = () => {
             uploadData.append('expire', expire);
             uploadData.append('publicKey', publicKey);
             uploadData.append('useUniqueFileName', 'true');
-            uploadData.append('folder', '/reels_app'); 
+            uploadData.append('folder', '/reels_app');
 
             const imageKitResponse = await axios.post('https://upload.imagekit.io/api/v1/files/upload', uploadData);
-            
+
             const videoUrl = imageKitResponse.data.url;
 
             // 3. Save Food Item to Backend
@@ -120,9 +167,7 @@ const CreateFood = () => {
                 video: videoUrl
             };
 
-            await axios.post(`${API_URL}/api/food`, foodData, {
-                withCredentials: true
-            });
+            await axios.post(`${API_URL}/api/food`, foodData, {withCredentials: true});
 
             setIsUploading(false);
             alert('Food item created successfully!');
@@ -220,6 +265,19 @@ const CreateFood = () => {
                             accept="video/*"/>
                     </div>
                 </div>
+
+                {/* 🔹AI Generate Button */}
+                <button type="button" className="ai-generate-btn"
+                    onClick={handleGenerateWithAI}
+                    disabled={aiLoading}>
+                    {
+                    aiLoading ? "✨ Generating..." : "✨ Generate Title & Description with AI"
+                } </button>
+
+                {
+                aiError && <p className="ai-error">
+                    {aiError}</p>
+            }
 
                 <div className="form-group">
                     <label htmlFor="itemName">Item Name</label>

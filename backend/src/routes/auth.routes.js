@@ -9,7 +9,7 @@ import {
     logoutFoodPartner,
     getCurrentUser
 } from "../controllers/auth.controller.js";
-import { loginLimiter, registerLimiter } from "../middlewares/rateLimit.middleware.js";
+import {loginLimiter, registerLimiter} from "../middlewares/rateLimit.middleware.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
 export const useRateLimiter = (storageKey = 'auth_global_lockout') => {
     const [lockoutTime, setLockoutTime] = useState(null);
@@ -19,7 +19,9 @@ export const useRateLimiter = (storageKey = 'auth_global_lockout') => {
 
     // Timer logic
     useEffect(() => {
-        if (!lockoutTime) return;
+        if (!lockoutTime) 
+            return;
+        
 
         const interval = setInterval(() => {
             const now = Date.now();
@@ -34,17 +36,17 @@ export const useRateLimiter = (storageKey = 'auth_global_lockout') => {
             }
         }, 1000);
 
-        return () => clearInterval(interval);
+        return() => clearInterval(interval);
     }, [lockoutTime, storageKey]);
 
     const handleRateLimitError = (error) => {
-        if (error.response?.status === 429) {
+        if (error.response ?. status === 429) {
             const waitTime = 15 * 60; // 15 mins default
             const expiry = Date.now() + waitTime * 1000;
             setLockoutTime(expiry);
             setTimeLeft(waitTime);
             localStorage.setItem(storageKey, expiry);
-            return error.response?.data?.message || "Too many attempts. Try again in 15 minutes.";
+            return error.response ?. data ?. message || "Too many attempts. Try again in 15 minutes.";
         }
         return null; // Not a rate limit error
     };
@@ -52,7 +54,9 @@ export const useRateLimiter = (storageKey = 'auth_global_lockout') => {
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
-        return `${m}:${s < 10 ? '0' : ''}${s}`;
+        return `${m}:${
+            s < 10 ? '0' : ''
+        }${s}`;
     };
 
     return {

@@ -1,9 +1,9 @@
 import {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
-import { API_URL } from '../config/api'
+import {API_URL} from '../config/api'
 import '../styles/auth.css'
-import { useRateLimiter } from '../hooks/useRateLimiter'
+import {useRateLimiter} from '../hooks/useRateLimiter'
 
 
 const UserRegister = () => {
@@ -12,20 +12,21 @@ const UserRegister = () => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    
+
     // Use a unique key for User Register
-    const { isLocked, timeLeft, handleRateLimitError, formatTime } = useRateLimiter('lockout_user_register');
+    const {isLocked, timeLeft, handleRateLimitError, formatTime} = useRateLimiter('lockout_user_register');
 
     const navigate = useNavigate()
 
     const submitHandler = async (e) => {
         e.preventDefault()
-        if (isLocked || loading) return;
+        if (isLocked || loading) 
+            return;
+        
         setError('')
         setLoading(true)
 
-        try {
-            // eslint-disable-next-line no-unused-vars
+        try { // eslint-disable-next-line no-unused-vars
             const response = await axios.post(`${API_URL}/api/auth/user/register`, {
                 fullName,
                 email,
@@ -43,7 +44,7 @@ const UserRegister = () => {
             if (rateLimitMsg) {
                 setError(rateLimitMsg);
             } else {
-                setError(err.response?.data?.message || 'Registration failed')
+                setError(err.response ?. data ?. message || 'Registration failed')
             }
         } finally {
             setLoading(false)
@@ -67,8 +68,9 @@ const UserRegister = () => {
                             onChange={
                                 (e) => setFullName(e.target.value)
                             }
-                            disabled={isLocked || loading}
-                        />
+                            disabled={
+                                isLocked || loading
+                            }/>
                     </div>
                     <div className='form-group'>
                         <label className='form-label' htmlFor='email'>Email Address</label>
@@ -77,8 +79,9 @@ const UserRegister = () => {
                             onChange={
                                 (e) => setEmail(e.target.value)
                             }
-                            disabled={isLocked || loading}
-                        />
+                            disabled={
+                                isLocked || loading
+                            }/>
                     </div>
                     <div className='form-group'>
                         <label className='form-label' htmlFor='password'>Password</label>
@@ -87,18 +90,29 @@ const UserRegister = () => {
                             onChange={
                                 (e) => setPassword(e.target.value)
                             }
-                            disabled={isLocked || loading}
-                        />
+                            disabled={
+                                isLocked || loading
+                            }/>
                     </div>
-                    {error && <div className="error-message">{error}</div>}
-                    <button 
-                        type='submit' 
-                        className='submit-btn'
-                        disabled={isLocked || loading}
-                        style={isLocked ? { backgroundColor: '#ccc', cursor: 'not-allowed' } : {}}
-                    >
-                        {isLocked ? `Try again in ${formatTime(timeLeft)}` : (loading ? 'Creating Account...' : 'Sign Up')}
-                    </button>
+                    {
+                    error && <div className="error-message">
+                        {error}</div>
+                }
+                    <button type='submit' className='submit-btn'
+                        disabled={
+                            isLocked || loading
+                        }
+                        style={
+                            isLocked ? {
+                                backgroundColor: '#ccc',
+                                cursor: 'not-allowed'
+                            } : {}
+                    }>
+                        {
+                        isLocked ? `Try again in ${
+                            formatTime(timeLeft)
+                        }` : (loading ? 'Creating Account...' : 'Sign Up')
+                    } </button>
                 </form>
                 <div className='auth-footer'>
                     <p>
